@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aero-Sentinel | System Verification Engine</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+
+    <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <span class="text-2xl">🛡️</span>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-cyan-400 uppercase">Aero-Sentinel Grid</h1>
+                <p class="text-xs text-slate-400">Autonomous Real-Time Supply Chain Resiliency Engine</p>
+            </div>
+        </div>
+        <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1 rounded-full text-xs font-semibold animate-pulse">
+            🚨 AWAITING EXPERT VERIFICATION (HUMAN-IN-THE-LOOP)
+        </span>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-1 flex flex-col gap-6">
+            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-6">
+                <h2 class="text-sm font-semibold text-slate-400 tracking-wider uppercase mb-4 flex items-center gap-2">
+                    ✈️ Grounded Aircraft Telemetry
+                </h2>
+                <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+                    <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60">
+                        <span class="block text-xs text-slate-500">INCIDENT LOG</span>
+                        <span class="font-mono font-bold text-cyan-400">{{ log_id }}</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60">
+                        <span class="block text-xs text-slate-500">TAIL NUMBER</span>
+                        <span class="font-mono font-bold text-slate-200">{{ tail_id }}</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60">
+                        <span class="block text-xs text-slate-500">CURRENT STATION</span>
+                        <span class="font-bold text-amber-400">{{ station }}</span>
+                    </div>
+                    <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60">
+                        <span class="block text-xs text-slate-500">SYSTEM MODULE</span>
+                        <span class="font-bold text-purple-400">PROPULSION / FUEL</span>
+                    </div>
+                </div>
+
+                <h2 class="text-sm font-semibold text-slate-400 tracking-wider uppercase mb-2 flex items-center gap-2">
+                    🔍 Unstructured Log Parser Summary
+                </h2>
+                <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-lg text-sm text-slate-300 leading-relaxed mb-4">
+                    "Flight pipeline telematics captured anomalous pressure drops during approach. Automated diagnostics isolate structural deterioration in component <span class="text-red-400 font-mono font-bold">{{ part_code }}</span>. Part swap required prior to technical flight clearance."
+                </div>
+            </div>
+
+            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-6 flex flex-col gap-4">
+                <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider border-b border-slate-800 pb-2">
+                    📋 AI Reliability Evaluation Form
+                </h3>
+                <p class="text-xs text-slate-400 leading-relaxed">Cross-check AI extractions with onboard physical manifests to calculate structural accuracy score loops.</p>
+                
+                <form id="evaluationForm" class="flex flex-col gap-5 mt-2" onsubmit="handleFormSubmission(event)">
+                    
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-medium text-slate-300">1. Is the AI extracted data metadata correct and valid?</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q1" value="yes" class="form-radio text-cyan-500" onclick="resetVerification()" required> Yes</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q1" value="no" class="form-radio text-red-500" onclick="resetVerification()"> No</label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-medium text-slate-300">2. Does this specific airframe model really need repairs?</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q2" value="yes" class="form-radio text-cyan-500" onclick="resetVerification()" required> Yes</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q2" value="no" class="form-radio text-red-500" onclick="resetVerification()"> No</label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-medium text-slate-300">3. Is part model asset code <span class="text-cyan-400 font-mono font-bold">{{ part_code }}</span> urgently needed?</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q3" value="yes" class="form-radio text-cyan-500" onclick="resetVerification()" required> Yes</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q3" value="no" class="form-radio text-red-500" onclick="resetVerification()"> No</label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-medium text-slate-300">4. AI suggested part <span class="text-cyan-400 font-mono font-bold">{{ part_code }}</span> for this defect. Is this correct according to default defaults?</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q4" value="yes" class="form-radio text-cyan-500" onclick="resetVerification()" required> Yes</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q4" value="no" class="form-radio text-red-500" onclick="resetVerification()"> No</label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2 border-b border-slate-800/40 pb-3">
+                        <label class="text-xs font-medium text-slate-300">5. AI suggested this specific part for this defect, does this part correct according to the default?</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q5" value="yes" class="form-radio text-cyan-500" onclick="resetVerification()" required> Yes</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="q5" value="no" class="form-radio text-red-500" onclick="resetVerification()"> No</label>
+                        </div>
+                    </div>
+
+                    <div id="vendorContactSection" class="hidden flex flex-col gap-3 border-t border-slate-800 pt-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                            📞 Direct Vendor Communication Portal
+                        </h4>
+                        <p class="text-[11px] text-slate-400 leading-tight">Coordinate technical operations directly with <span class="text-slate-200 font-medium">{{ hub_name }}</span> dispatch handlers via encrypted telecom lines:</p>
+                        <div class="grid grid-cols-3 gap-2 mt-1">
+                            <a href="tel:+919876543210" class="flex flex-col items-center justify-center gap-1 p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded transition text-cyan-400 group">
+                                <span class="text-lg">📞</span>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 group-hover:text-cyan-400">Voice Call</span>
+                            </a>
+                            <a href="sms:+919876543210?body=AOG%20Alert%20{{ log_id }}:%20Inquiry%20on%20part%20{{ part_code }}" class="flex flex-col items-center justify-center gap-1 p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded transition text-emerald-400 group">
+                                <span class="text-lg">💬</span>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 group-hover:text-emerald-400">Message</span>
+                            </a>
+                            <a href="mailto:dispatch@{{ hub_code|lower }}-aviation.in?subject=CRITICAL%20AOG%20REQUISITION%20[{{ log_id }}]&body=Team,%20requesting%20immediate%20handling%20metrics%20for%20part%20{{ part_code }}%20to%20station%20{{ station }}." class="flex flex-col items-center justify-center gap-1 p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded transition text-purple-400 group">
+                                <span class="text-lg">✉️</span>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 group-hover:text-purple-400">Email Hub</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="feedbackSection" class="hidden flex flex-col gap-4 border-t border-slate-800 pt-4">
+                        <h4 id="feedbackLabel" class="text-xs font-bold uppercase tracking-wider text-cyan-400">📝 Manager Post-Audit Performance Survey</h4>
+                        
+                        <div class="flex flex-col gap-1.5 text-xs bg-slate-900/40 p-2.5 rounded border border-slate-800/60">
+                            <label class="font-medium text-slate-300">1. Does this default found by AI was correct?</label>
+                            <div class="flex flex-wrap gap-3 mt-1 text-slate-400">
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q1" value="correct" required> Correct</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q1" value="partially"> Partially Correct</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q1" value="wrong"> Totally Wrong</label>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5 text-xs bg-slate-900/40 p-2.5 rounded border border-slate-800/60">
+                            <label class="font-medium text-slate-300">2. Does this suggested part for the default was accurate?</label>
+                            <div class="flex flex-wrap gap-3 mt-1 text-slate-400">
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q2" value="correct" required> Correct</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q2" value="partially"> Partially Correct</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q2" value="wrong"> Totally Wrong</label>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5 text-xs bg-slate-900/40 p-2.5 rounded border border-slate-800/60">
+                            <label class="font-medium text-slate-300">3. Suggested Vendor of the warehouse was valid?</label>
+                            <div class="flex gap-4 mt-1 text-slate-400">
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q3" value="yes" required> Yes</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q3" value="no"> No</label>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5 text-xs bg-slate-900/40 p-2.5 rounded border border-slate-800/60">
+                            <label class="font-medium text-slate-300">4. Suggested quantities of the repairing part by AI was correct?</label>
+                            <div class="flex gap-4 mt-1 text-slate-400">
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q4" value="yes" required> Yes</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="fb_q4" value="no"> No</label>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5 text-xs">
+                            <label class="font-medium text-slate-300">5. Want to write something else which was not mentioned in the above options?</label>
+                            <textarea id="feedbackText" rows="2" placeholder="Summary details..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 transition" required></textarea>
+                        </div>
+                        
+                        <button type="submit" id="finalSubmitBtn" class="mt-2 w-full text-slate-950 font-bold py-3 px-4 rounded-lg shadow-lg tracking-wide transition cursor-pointer">
+                            SUBMIT LOGISTICS AUDIT FILE
+                        </button>
+                    </div>
+
+                    <div id="actionButtonWrapper" class="mt-2">
+                        <button type="button" onclick="evaluateFormRules()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold py-3 px-4 rounded-lg shadow-lg tracking-wide transition cursor-pointer">
+                            🔍 VERIFY AI SYSTEM METRICS
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 flex flex-col gap-6">
+            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-sm font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-2">
+                        🗺️ Live Supply Chain Routing Topology
+                    </h2>
+                    <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">
+                        Optimal Route: {{ hub_name }} ({{ hub_distance }} KM away)
+                    </span>
+                </div>
+                <div id="map" class="w-full h-80 rounded-lg border border-slate-800 bg-slate-900"></div>
+            </div>
+
+            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-6">
+                <h2 class="text-sm font-semibold text-slate-400 tracking-wider uppercase mb-4">
+                    📊 Regional Vendor Inventory Matrix (Part # {{ part_code }})
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 text-xs tracking-wider uppercase">
+                                <th class="pb-3 font-semibold">Supplier Hub Name</th>
+                                <th class="pb-3 font-semibold">Location</th>
+                                <th class="pb-3 font-semibold">Stock Availability</th>
+                                <th class="pb-3 font-semibold text-right">Unit Pricing</th>
+                                <th class="pb-3 font-semibold text-right">Estimated Transit</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/40 text-slate-300">
+                            <tr class="bg-cyan-500/5 group">
+                                <td class="py-3 font-medium text-slate-100 flex items-center gap-2">
+                                    <span class="text-cyan-400">🌟</span> {{ hub_name }}
+                                </td>
+                                <td class="py-3 font-mono text-xs text-slate-400">{{ hub_code }}</td>
+                                <td class="py-3 font-semibold text-emerald-400">{{ hub_stock }} units available</td>
+                                <td class="py-3 text-right font-mono font-bold text-cyan-400">₹45,200</td>
+                                <td class="py-3 text-right font-semibold text-emerald-400">運輸中 ({{ (hub_distance / 250)|round(1) }} hrs)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 text-slate-400">Delhi Aerospace Spares Depot</td>
+                                <td class="py-3 font-mono text-xs text-slate-500">DEL</td>
+                                <td class="py-3 text-slate-400">4 units available</td>
+                                <td class="py-3 text-right font-mono text-slate-400">₹42,100</td>
+                                <td class="py-3 text-right text-slate-400">⏳ Moderate (5.4 hrs)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 text-slate-400">Kolkata Aviation Safety Vault</td>
+                                <td class="py-3 font-mono text-xs text-slate-500">CCU</td>
+                                <td class="py-3 text-slate-400">3 units available</td>
+                                <td class="py-3 text-right font-mono text-slate-400">₹49,800</td>
+                                <td class="py-3 text-right text-slate-400">⏳ Slow (8.2 hrs)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStatusState = "";
+
+        function resetVerification() {
+            document.getElementById("feedbackSection").classList.add("hidden");
+            document.getElementById("vendorContactSection").classList.add("hidden");
+            const targetContainer = document.getElementById("actionButtonWrapper");
+            targetContainer.innerHTML = `
+                <button type="button" onclick="evaluateFormRules()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold py-3 px-4 rounded-lg shadow-lg tracking-wide transition cursor-pointer">
+                    🔍 VERIFY AI SYSTEM METRICS
+                </button>
+            `;
+        }
+
+        function evaluateFormRules() {
+            const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+            const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+            const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+            const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+            const q5 = document.querySelector('input[name="q5"]:checked')?.value;
+            const targetContainer = document.getElementById("actionButtonWrapper");
+
+            if (!q1 || !q2 || !q3 || !q4 || !q5) {
+                alert("Please fill out verification questions 1 through 5 completely before processing verification.");
+                return;
+            }
+
+            if (q1 === "yes" && q2 === "yes" && q3 === "yes" && q4 === "yes" && q5 === "yes") {
+                targetContainer.innerHTML = `
+                    <button type="button" onclick="openFeedbackBox('APPROVE')" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold py-3 px-4 rounded-lg shadow-lg tracking-wide transition cubic-bezier cursor-pointer">
+                        🔓 APPROVE DISPATCH GATEWAY
+                    </button>
+                `;
+            } 
+            else if (q1 === "no" && q2 === "no" && q3 === "no" && q4 === "no" && q5 === "no") {
+                targetContainer.innerHTML = `
+                    <button type="button" onclick="openFeedbackBox('DECLINE')" class="w-full bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 text-slate-100 font-bold py-3 px-4 rounded-lg shadow-lg tracking-wide transition cubic-bezier cursor-pointer">
+                        🔓 DECLINE AI ALERT ENTRIES
+                    </button>
+                `;
+            } 
+            else {
+                targetContainer.innerHTML = `
+                    <div class="bg-amber-500/5 border border-amber-500/20 text-amber-400 rounded-lg p-3 text-xs text-center leading-relaxed">
+                        ⚠️ <b>MIXED AUDIT TRACKS:</b> Discrepancies detected. Mixed tracking states require manual control room review.
+                    </div>
+                `;
+                setTimeout(() => {
+                    alert("Mixed metrics registered. Redirecting payload parameters back to overview root.");
+                    window.location.href = "/dossier/home";
+                }, 4000);
+            }
+        }
+
+        function openFeedbackBox(actionState) {
+            currentStatusState = actionState;
+            const vendorContactSection = document.getElementById("vendorContactSection");
+            const feedbackSection = document.getElementById("feedbackSection");
+            const feedbackLabel = document.getElementById("feedbackLabel");
+            const submitBtn = document.getElementById("finalSubmitBtn");
+
+            // Reveal vendor contact module below active state
+            vendorContactSection.classList.remove("hidden");
+            
+            // Reveal dynamic metric performance scorecard survey form container
+            feedbackSection.classList.remove("hidden");
+            
+            if (actionState === "APPROVE") {
+                feedbackLabel.innerHTML = "📝 Provide final confirmation notes for procurement approval:";
+                submitBtn.className = "mt-2 w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 px-4 rounded-lg transition cursor-pointer font-mono text-xs tracking-wider";
+                submitBtn.innerText = "🚀 SUBMIT AND AUTHORIZE CARGO DISPATCH";
+            } else {
+                feedbackLabel.innerHTML = "📝 Provide failure/mismatch logging details for system rejection:";
+                submitBtn.className = "mt-2 w-full bg-red-500 hover:bg-red-400 text-slate-100 font-bold py-3 px-4 rounded-lg transition cursor-pointer font-mono text-xs tracking-wider";
+                submitBtn.innerText = "❌ SUBMIT AND WIPE INVALID INCIDENT ALERTS";
+            }
+            
+            vendorContactSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleFormSubmission(event) {
+            event.preventDefault();
+            const feedbackSummary = document.getElementById("feedbackText").value;
+            
+            let confirmationPrompt = "";
+            if (currentStatusState === "APPROVE") {
+                confirmationPrompt = `✅ DISPATCH AUDIT SIGNED\n\nStatus: APPROVED\nProcurement Note: "${feedbackSummary}"\n\nInitializing structural asset launch vectors. Ready for automated takeoff sequence?`;
+            } else {
+                confirmationPrompt = `❌ DISPATCH AUDIT SIGNED\n\nStatus: REJECTED\nProcurement Note: "${feedbackSummary}"\n\nAI error logging profiles updated securely. Ready to purge incident frames?`;
+            }
+
+            alert(confirmationPrompt);
+            window.location.href = `/verify/${encodeURIComponent("{{ log_id }}")}/complete`;
+        }
+
+        const coordinatesMap = {
+            'DEL': [28.5562, 77.1000], 'BOM': [19.0896, 72.8656], 'NAG': [21.0922, 79.0472],
+            'BLR': [13.1986, 77.7066], 'CCU': [22.6547, 88.4467], 'MAA': [12.9941, 80.1708],
+            'HYD': [17.2403, 78.4294]
+        };
+
+        const currentStation = "{{ station }}";
+        const supplierHub = "{{ hub_code }}";
+        const startCoords = coordinatesMap[currentStation] || coordinatesMap['BOM'];
+        const endCoords = coordinatesMap[supplierHub] || coordinatesMap['NAG'];
+
+        const map = L.map('map', {zoomControl: false}).setView(startCoords, 5);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        const planeIcon = L.divIcon({html: '✈️', className: 'text-2xl', iconAnchor: [12, 12]});
+        const boxIcon = L.divIcon({html: '📦', className: 'text-2xl', iconAnchor: [12, 12]});
+
+        L.marker(startCoords, {icon: planeIcon}).addTo(map);
+        L.marker(endCoords, {icon: boxIcon}).addTo(map);
+
+        const routeLine = L.polyline([startCoords, endCoords], {color: '#22d3ee', weight: 3, dashArray: '5, 10'}).addTo(map);
+        map.fitBounds(routeLine.getBounds(), {padding: [40, 40]});
+    </script>
+</body>
+</html>

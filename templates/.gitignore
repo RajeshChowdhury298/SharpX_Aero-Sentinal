@@ -1,0 +1,12 @@
+# Python environment tracking buffers
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# macOS system tracking files
+.DS_Store
+
+# Sensitive credential file fallbacks (if any)
+.env
