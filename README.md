@@ -55,6 +55,9 @@ Upon completing the granular multi-choice performance survey (rating the AI as *
 
 ---
 
+## Project Demo
+Link: https://drive.google.com/file/d/1D2pobYigJSpSTR_w9qKbxI2iU9qmEA2y/view?usp=sharing
+
 ## 📂 Repository Directory Layout
 
 ```font-mono
@@ -68,3 +71,5 @@ Aero-Sentinel/
 │   ├── dossier.html           # Leaflet Map Engine, 5-Point Validation Survey, & Vendor Comms
 │   └── thanks.html            # Hardware-Accelerated CSS Jet Plane Takeoff Animation View
 └── .gitignore                 # Environment Isolation Safeguard Buffer Matrix
+
+
